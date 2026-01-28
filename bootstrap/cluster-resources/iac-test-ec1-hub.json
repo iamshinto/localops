@@ -1,4 +1,4 @@
 {
-  "name": "in-cluster",
+  "name": "iac-test-ec1-hub",
   "server": "https://kubernetes.default.svc"
 }
