@@ -7,6 +7,6 @@ metadata:
     argocd.argoproj.io/sync-wave: "-2"
   labels:
     platform/managed-by: "platform"
-  name: iac-insights-system
+  name: iac-insights-system-test
 spec: {}
 status: {}

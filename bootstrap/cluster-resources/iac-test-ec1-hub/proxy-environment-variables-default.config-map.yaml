@@ -6,5 +6,5 @@ metadata:
     argocd.argoproj.io/sync-options: "Delete=false,Prune=false,ServerSideApply=true,Validate=false"
   labels:
     cache.kyverno.io/enabled: "true"
-  name: proxy-environment-variables
+  name: proxy-environment-variables-test
   namespace: default
