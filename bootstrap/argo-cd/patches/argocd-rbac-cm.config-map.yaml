@@ -6,8 +6,8 @@ data:
     p, role:platform-admin, clusters, *, *, allow
     p, role:platform-admin, repositories, *, *, allow
     p, role:platform-admin, projects, *, *, allow
-    g, test-user, role:platform-admin
-    g, test-user, role:platform-admin
+    g, shinto, role:platform-admin
+    g, shinto, role:platform-admin
 kind: ConfigMap
 metadata:
   name: argocd-rbac-cm
