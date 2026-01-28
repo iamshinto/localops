@@ -1,0 +1,12 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: "Prune=false"
+    argocd.argoproj.io/sync-wave: "-2"
+  labels:
+    platform/managed-by: "platform"
+  name: iac-insights-system
+spec: {}
+status: {}

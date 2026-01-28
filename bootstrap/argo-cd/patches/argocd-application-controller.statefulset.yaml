@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: argocd-application-controller
+spec:
+  replicas: 1
+  template:
+    spec:
+      containers:
+        - name: argocd-application-controller
+          env:
+            - name: ARGOCD_CONTROLLER_REPLICAS
+              value: "1"
+          args:
+            - /usr/local/bin/argocd-application-controller
+            - --status-processors=20  # default 20
+            - --operation-processors=10  # default 10
+          #            - --sharding-method=round-robin

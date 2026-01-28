@@ -1,0 +1,39 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+  annotations:
+    argocd.argoproj.io/compare-options: IgnoreExtraneous
+  labels:
+    app.kubernetes.io/name: argocd-cm
+    app.kubernetes.io/part-of: argocd
+data:
+  accounts.shinto: apiKey, login
+  statusbadge.enabled: "true"
+  application.resourceTrackingMethod: annotation
+  resource.exclusions: |
+    - apiGroups:
+      - velero.io
+      kinds:
+      - Backup
+      - Restore
+      clusters:
+      - "*"
+    - apiGroups:
+      - kubernetes.crossplane.io
+      kinds:
+      - ProviderConfigUsage
+      clusters:
+      - "*"
+    - apiGroups:
+      - helm.crossplane.io
+      kinds:
+      - ProviderConfigUsage
+      clusters:
+      - "*"
+  resource.compareoptions: |
+    ignoreAggregatedRoles: true
+  resource.customizations.ignoreDifferences.kyverno.io_ClusterPolicy: |
+    managedFieldsManagers:
+    - kyverno

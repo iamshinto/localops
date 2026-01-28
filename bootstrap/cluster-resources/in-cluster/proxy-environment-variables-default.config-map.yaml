@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: "Delete=false,Prune=false,ServerSideApply=true,Validate=false"
+  labels:
+    cache.kyverno.io/enabled: "true"
+  name: proxy-environment-variables
+  namespace: default
