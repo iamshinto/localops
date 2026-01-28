@@ -1,0 +1,96 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-options: PruneLast=true
+    argocd.argoproj.io/sync-wave: "-2"
+  creationTimestamp: null
+  name: iac-test
+  namespace: argocd
+spec:
+  clusterResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  description: iac test project
+  destinations:
+    - namespace: '*'
+      server: '*'
+  namespaceResourceWhitelist:
+    - group: '*'
+      kind: '*'
+  sourceRepos:
+    - '*'
+  syncWindows:
+    - kind: allow
+      schedule: '0 6 * * 1-5'
+      duration: 12h
+      applications:
+        - '*-karpenter-config'
+      manualSync: true
+      timeZone: UTC
+status: {}
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  annotations:
+    argocd.argoproj.io/sync-wave: "0"
+  creationTimestamp: null
+  name: iac-test
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - git:
+        files:
+          - path: apps/*/overlays/iac-test-*/config.json
+        repoURL: https://github.com/iamshinto/localops.git
+        requeueAfterSeconds: 20
+        revision: ""
+        template:
+          metadata: {}
+          spec:
+            destination: {}
+            project: ""
+  syncPolicy: {}
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/managed-by: fcp-argocd-autopilot
+        app.kubernetes.io/name: '{{ .appName }}'
+      annotations:
+        argocd.argoproj.io/manifest-generate-paths: '.;../../base;../../components'
+      name: '{{ .path.basename }}-{{ .appName }}'
+      namespace: argocd
+    spec:
+      destination:
+        namespace: '{{ .destNamespace }}'
+        name: '{{ .path.basename }}'
+      ignoreDifferences:
+        - group: argoproj.io
+          jsonPointers:
+            - /status
+          kind: Application
+        - group: autoscaling.k8s.io
+          kind: VerticalPodAutoscaler
+          jsonPointers:
+            - /spec/targetRef
+            - /spec/targetRef/name
+          managedFieldsManagers:
+            - kyverno
+            - background-controller
+      project: iac-test
+      source:
+        path: '{{ dig "srcPath" .path.path . }}'
+        repoURL: '{{ dig "srcRepoURL" "https://github.com/iamshinto/localops.git" . }}'
+        targetRevision: '{{ dig "srcTargetRevision" "" . }}'
+      syncPolicy:
+        automated:
+          allowEmpty: true
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - RespectIgnoreDifferences=true
+status: {}
